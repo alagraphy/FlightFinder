@@ -2,8 +2,10 @@
 # Scrip Main for Cheap Flights
 ###############################################
 
-from selenium.webdriver.chrome.webdriver import Options
+import csv
+import string
 from splinter import Browser
+
 
 # Start
 
@@ -22,12 +24,21 @@ def fillflight(fieldnumber, frport, toport, date):
         browser.fill('ToAirport' + str(fieldnumber), toport)
         browser.fill('Date' + str(fieldnumber), date)
 
+#########################
+## Wrtie content to CSV
+def writetocsv(in_ofile, in_string):
+    splitstring = in_string.split('\n\n\n')
+    writer = csv.writer(in_ofile, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    for iter in splitstring:
+        writer.writerow(iter.split('\n'))
+
 
 ########################
 ## MAIN FUNCTION
 def main():
     # Vist google
     browser.visit('http://www.expedia.ca/Flights')
+    ofile = open("FilghtsAll.csv", 'wb')
 
     # Choose multicity triip
     browser.choose('TripType', 'Multicity')
@@ -47,7 +58,14 @@ def main():
     # Click on Search
     browser.find_by_id('F-searchButtonExt1').click()
 
+    # Parse the string
+    valuestring = browser.find_by_id('flightModule0').value
 
+
+
+    # Close browser
+    browser.quit()
+    ofile.close()
 
 
 ## MAIN METHOD CALL
